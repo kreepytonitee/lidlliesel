@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Stories</title>
+<link rel="stylesheet" href="/assets/css/styles.css">
+</head>
+<body>
+<h1>Stories</h1>
+<div id="stories"></div>
+
+<script>
+fetch('/data/stories.json')
+  .then(res => res.json())
+  .then(data => {
+    const container = document.getElementById('stories');
+    const stories = {};
+    data.forEach(chap => {
+      if (!stories[chap.story_slug]) {
+        stories[chap.story_slug] = {
+          title: chap.story_title,
+          cover: chap.cover_image,
+          desc: chap.description,
+          slug: chap.story_slug
+        };
+      }
+    });
+    Object.values(stories).forEach(story => {
+      const div = document.createElement('div');
+      div.innerHTML = `
+        <img src="${story.cover}" alt="${story.title}" class="cover">
+        <h2>${story.title}</h2>
+        <p>${story.desc}</p>
+        <a href="/story/${story.slug}/chapter-1.html">Read</a>
+      `;
+      container.appendChild(div);
+    });
+  });
+</script>
+</body>
+</html>
