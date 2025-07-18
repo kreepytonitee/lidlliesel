@@ -1,41 +1,52 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Stories</title>
-<link rel="stylesheet" href="/assets/css/styles.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dual Language Stories - Learn with Reading</title>
+    <link rel="stylesheet" href="assets/css/styles.css">
 </head>
 <body>
-<h1>Stories</h1>
-<div id="stories"></div>
+    <header class="top-banner" id="topBanner">
+        </header>
 
-<script>
-fetch('/data/stories.json')
-  .then(res => res.json())
-  .then(data => {
-    const container = document.getElementById('stories');
-    const stories = {};
-    data.forEach(chap => {
-      if (!stories[chap.story_slug]) {
-        stories[chap.story_slug] = {
-          title: chap.story_title,
-          cover: chap.cover_image,
-          desc: chap.description,
-          slug: chap.story_slug
-        };
-      }
-    });
-    Object.values(stories).forEach(story => {
-      const div = document.createElement('div');
-      div.innerHTML = `
-        <img src="${story.cover}" alt="${story.title}" class="cover">
-        <h2>${story.title}</h2>
-        <p>${story.desc}</p>
-        <a href="/story/${story.slug}/chapter-1.html">Read</a>
-      `;
-      container.appendChild(div);
-    });
-  });
-</script>
+    <div class="container">
+        <h1>Welcome to Dual Language Stories!</h1>
+        <p class="tagline">Read engaging stories side-by-side in two languages to boost your learning.</p>
+
+        <div id="storiesList" class="stories-grid">
+            
+        <a href="story/rotkaeppchen/chapter-1.html" class="story-card">
+            <img src="/assets/images/covers/Rotkaeppchen_maerchen_01.jpg" alt="Rotkäppchen Cover">
+            <div class="story-card-content">
+                <h3>Rotkäppchen</h3>
+                <p>Ein klassisches Märchen der Brüder Grimm.</p>
+                <span class="read-link">Read Story</span>
+            </div>
+        </a>
+        
+        <a href="story/my-epic-saga/chapter-1.html" class="story-card">
+            <img src="assets/images/covers/saga.jpg" alt="My Epic Saga Cover">
+            <div class="story-card-content">
+                <h3>My Epic Saga</h3>
+                <p>A grand adventure across many lands and hundreds of chapters.</p>
+                <span class="read-link">Read Story</span>
+            </div>
+        </a>
+        
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2025 Dual Language Stories. All rights reserved.</p>
+    </footer>
+
+    <script src="assets/js/main.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // For the index page, stories are now statically generated, no need for loadStories()
+            loadAffiliateBanner(); // Load banner on index page
+        });
+    </script>
 </body>
 </html>

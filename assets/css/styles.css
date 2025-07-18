@@ -1,39 +1,308 @@
+/* General Body Styles */
 body {
-  font-family: sans-serif;
-  margin: 20px;
-}
-.cover {
-  max-width: 150px;
-}
-.row {
-  display: flex;
-  margin-bottom: 1em;
-}
-.left, .right {
-  flex: 1;
-  padding: 0.5em;
-  border: 1px solid #ccc;
-  box-sizing: border-box;
-}
-#link-wall {
-  position: fixed;
-  top:0; left:0;
-  width:100%; height:100%;
-  background:white;
-  z-index:1000;
-  text-align:center;
-  padding-top:50px;
-}
-#affiliate-banner {
-  background: #eee;
-  padding: 10px;
-  text-align: center;
-}
-#affiliate-banner img {
-  max-height: 50px;
-}
-@media(max-width:768px){
-  .row {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f7f6;
+    color: #333;
+    display: flex;
     flex-direction: column;
-  }
+    min-height: 100vh; /* Ensures footer is at bottom */
+}
+
+.container {
+    max-width: 1200px;
+    margin: 20px auto;
+    padding: 0 20px;
+    flex-grow: 1; /* Allows container to take available space */
+}
+
+/* Header/Top Banner */
+.top-banner {
+    background-color: #e0e0e0;
+    padding: 10px 20px;
+    text-align: center;
+    border-bottom: 1px solid #ccc;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+    flex-wrap: wrap; /* Allow wrapping on smaller screens */
+    min-height: 60px; /* Minimum height for banner */
+}
+
+.top-banner a {
+    text-decoration: none;
+    color: #007bff;
+    font-weight: bold;
+}
+
+.top-banner img {
+    max-width: 50px;
+    height: auto;
+    vertical-align: middle;
+    border-radius: 5px;
+}
+
+.top-banner .ad-content {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+
+/* Home Page - Stories Grid */
+.stories-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 25px;
+    margin-top: 30px;
+}
+
+.story-card {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    transition: transform 0.2s ease-in-out;
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    flex-direction: column;
+}
+
+.story-card:hover {
+    transform: translateY(-5px);
+}
+
+.story-card img {
+    width: 100%;
+    height: 200px; /* Fixed height for covers */
+    object-fit: cover; /* Ensures images fill space without distortion */
+    border-bottom: 1px solid #eee;
+}
+
+.story-card-content {
+    padding: 15px;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.story-card h3 {
+    margin-top: 0;
+    margin-bottom: 10px;
+    color: #2c3e50;
+    font-size: 1.4em;
+}
+
+.story-card p {
+    font-size: 0.95em;
+    color: #555;
+    flex-grow: 1; /* Allows description to push title/link to top/bottom */
+}
+
+.story-card .read-link {
+    display: inline-block;
+    background-color: #007bff;
+    color: white;
+    padding: 8px 15px;
+    border-radius: 5px;
+    text-align: center;
+    margin-top: 15px;
+    text-decoration: none;
+    align-self: flex-start; /* Aligns button to the left */
+}
+
+.story-card .read-link:hover {
+    background-color: #0056b3;
+}
+
+
+/* Chapter Page Styles */
+.chapter-container {
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.chapter-container h1 {
+    text-align: center;
+    color: #2c3e50;
+    margin-bottom: 5px;
+    font-size: 2em;
+}
+
+.chapter-container h2 {
+    text-align: center;
+    color: #6c757d;
+    font-size: 1.2em;
+    margin-top: 0;
+    margin-bottom: 25px;
+}
+
+.chapter-navigation {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 30px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 15px;
+}
+
+.nav-button {
+    background-color: #007bff;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    text-decoration: none;
+    transition: background-color 0.2s;
+    white-space: nowrap; /* Prevent breaking on small screens */
+}
+
+.nav-button:hover {
+    background-color: #0056b3;
+}
+
+.nav-button.hidden {
+    visibility: hidden; /* Keep space, but hide button */
+    pointer-events: none; /* Disable clicks */
+}
+
+/* Side-by-Side Reading Interface */
+.paragraph-pair {
+    display: flex;
+    margin-bottom: 25px; /* Space between paragraph pairs */
+    background-color: #f9f9f9; /* Slight background for readability */
+    border-left: 3px solid #007bff;
+    padding: 15px;
+    border-radius: 5px;
+}
+
+.lang-one,
+.lang-two {
+    flex: 1; /* Both columns take equal width */
+    padding: 0 15px; /* Padding within columns */
+    font-size: 1.1em;
+    line-height: 1.8;
+}
+
+.lang-one {
+    border-right: 1px solid #eee; /* Separator between languages */
+}
+
+/* Affiliate Wall */
+.affiliate-wall {
+    background-color: #ffe0b2; /* Light orange background */
+    border: 1px solid #ffcc80;
+    padding: 30px;
+    text-align: center;
+    border-radius: 8px;
+    margin-bottom: 30px;
+}
+
+.affiliate-wall p {
+    font-size: 1.2em;
+    margin-bottom: 20px;
+    color: #5d4037;
+}
+
+.unlock-button {
+    background-color: #ff9800;
+    color: white;
+    padding: 15px 30px;
+    font-size: 1.3em;
+    border: none;
+    border-radius: 50px; /* Pill shape */
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.1s ease;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.unlock-button:hover {
+    background-color: #f57c00;
+    transform: translateY(-2px);
+}
+
+.unlock-button:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* Hidden content class */
+.hidden {
+    display: none !important;
+}
+
+/* Footer */
+footer {
+    margin-top: 40px;
+    padding: 20px;
+    background-color: #333;
+    color: #f4f7f6;
+    text-align: center;
+    font-size: 0.9em;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .container {
+        margin: 10px auto;
+        padding: 0 15px;
+    }
+
+    .top-banner {
+        flex-direction: column;
+        gap: 10px;
+        padding: 10px;
+    }
+
+    .top-banner .ad-content {
+        flex-direction: column;
+        gap: 5px;
+    }
+
+    .stories-grid {
+        grid-template-columns: 1fr; /* Stack cards on mobile */
+    }
+
+    .chapter-navigation {
+        flex-direction: column;
+        gap: 15px;
+        align-items: center;
+    }
+
+    .nav-button {
+        width: 100%;
+        text-align: center;
+    }
+
+    .paragraph-pair {
+        flex-direction: column; /* Stack columns on smaller screens */
+        padding: 10px;
+    }
+
+    .lang-one, .lang-two {
+        padding: 5px 0; /* Adjust padding for stacked view */
+        border-right: none; /* Remove separator */
+        border-bottom: 1px dashed #eee; /* Add dashed separator for stacked paragraphs */
+    }
+    .lang-two {
+        border-bottom: none; /* Last paragraph doesn't need border */
+    }
+
+    .chapter-container {
+        padding: 20px;
+    }
+
+    .affiliate-wall {
+        padding: 20px;
+    }
+
+    .unlock-button {
+        width: 100%;
+        font-size: 1.1em;
+        padding: 12px 20px;
+    }
 }

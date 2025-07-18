@@ -1,0 +1,38 @@
+[
+    {
+        "slug": "rotkaeppchen",
+        "title": "Rotkäppchen",
+        "description": "Ein klassisches Märchen der Brüder Grimm.",
+        "cover_image_url": "/assets/images/covers/Rotkaeppchen_maerchen_01.jpg",
+        "chapters": [
+            {
+                "slug": "chapter-1",
+                "title": "Rotkäppchen"
+            },
+            {
+                "slug": "chapter-2",
+                "title": "Das kleine Haus"
+            }
+        ]
+    },
+    {
+        "slug": "my-epic-saga",
+        "title": "My Epic Saga",
+        "description": "A grand adventure across many lands and hundreds of chapters.",
+        "cover_image_url": "assets/images/covers/saga.jpg",
+        "chapters": [
+            {
+                "slug": "chapter-1",
+                "title": "The Beginning"
+            },
+            {
+                "slug": "chapter-2",
+                "title": "The Call to Adventure"
+            },
+            {
+                "slug": "chapter-201",
+                "title": "The Great Reveal"
+            }
+        ]
+    }
+]
