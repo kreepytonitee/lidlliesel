@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Call to Adventure - My Epic Saga</title>
+    <link rel="stylesheet" href="../../assets/css/styles.css">
+</head>
+<body>
+    <header class="top-banner" id="topBanner">
+        </header>
+
+    <div class="container chapter-container">
+        <h1 id="chapterTitle">The Call to Adventure</h1>
+        <h2 id="storyTitle">From: My Epic Saga</h2>
+
+        <div class="chapter-navigation">
+            <a href="./chapter-1.html" id="prevChapter" class="nav-button ">&laquo; Previous Chapter</a>
+            <a href="index.html" class="nav-button">Back to Stories</a>
+            <a href="./chapter-201.html" id="nextChapter" class="nav-button ">Next Chapter &raquo;</a>
+        </div>
+
+        <div id="affiliateWall" class="affiliate-wall">
+            <p>To unlock this chapter and support our work, please visit one of our partners:</p>
+            <button id="unlockChapterBtn" class="unlock-button">Unlock Chapter by Visiting a Partner</button>
+        </div>
+
+        <div id="chapterContent" class="chapter-content hidden">
+            
+                <div class="paragraph-pair">
+                    <p class="lang-one">The old wizard, with eyes like amber...</p>
+                    <p class="lang-two">El viejo mago, con ojos como el ámbar...</p>
+                </div>
+                
+                <div class="paragraph-pair">
+                    <p class="lang-one">He spoke of a shadow rising...</p>
+                    <p class="lang-two">Habló de una sombra que se alzaba...</p>
+                </div>
+                
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2025 Dual Language Stories. All rights reserved.</p>
+    </footer>
+
+    <script src="../../assets/js/main.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // No need to dynamically get story/chapter slug from URL as content is static
+            // initializeChapterPage in main.js is now simplified to only handle wall and banner
+            loadAffiliateBanner(); // This now explicitly ensures banner loads on chapter pages
+            handleAffiliateWall(); // Ensure affiliate wall logic is executed
+        });
+    </script>
+</body>
+</html>

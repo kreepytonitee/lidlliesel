@@ -1,0 +1,17 @@
+{
+  "name": "lidl-liesel",
+  "version": "1.0.0",
+  "description": "A dual-language story reading website with affiliate monetization.",
+  "main": "fetch-data.js",
+  "scripts": {
+    "generate": "node fetch-data.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "csv-parse": "^5.6.0",
+    "fs-extra": "^11.3.0",
+    "node-fetch": "^2.7.0"
+  }
+}
