@@ -70,3 +70,5 @@ Commit updated data/stories.json and data/affiliates.json to GitHub.
 
 Push to trigger site rebuild.
 
+## Ask ChatGPT
+https://chatgpt.com/c/687a9bc6-a9bc-8004-80bf-98d28e9750a2
