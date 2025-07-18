@@ -13,14 +13,14 @@ A bilingual story reading website
 
 ## Implementation Steps
 
-# Setup Phase
+### Setup Phase
 Create a free GitHub account and repository for the site.
 
 Enable GitHub Pages in the repository settings, set it to deploy from main branch or /docs folder.
 
 Reserve a domain name (optional, otherwise use the *.github.io URL).
 
-# Content Management
+### Content Management
 Set up two Google Sheets:
 
 Stories & Chapters:
@@ -33,7 +33,7 @@ Publish both sheets as CSV (File → Share → Publish to web → CSV format).
 
 Write a script (scripts/fetch-data.js) to fetch those CSVs, convert to JSON (data/stories.json and data/affiliates.json) for the site. Or manually export CSV → JSON during build if desired.
 
-# Frontend Development
+### Frontend Development
 Design the HTML templates:
 
 index.html: loops through stories.json → lists all stories with cover, title, description.
@@ -54,12 +54,12 @@ On click of the unlock button: open affiliate link in new tab, hide overlay, rev
 
 Optional: use localStorage to remember unlocked chapters during a session.
 
-# Deployment
+### Deployment
 Push all code to the GitHub repository.
 
 Visit the site’s URL (https://yourusername.github.io/your-repo), test.
 
-# Maintenance Workflow
+### Maintenance Workflow
 To add/edit stories or links:
 
 Update the Google Sheets.
