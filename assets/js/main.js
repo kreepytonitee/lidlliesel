@@ -14,7 +14,7 @@ async function loadAffiliateBanner(dataPath) {
             const topBanner = document.getElementById('topBanner');
             if (topBanner) {
                 topBanner.innerHTML = `
-                    <div class="ad-content">
+                    <div class="banner-ad-content">
                         ${ad.image_url ? `<img src="${ad.image_url}" alt="${ad.alt_text || ad.product_name || 'Partner Ad'}">` : ''}
                         <span>Check out our partner: <strong>${ad.product_name || 'Our Partner'}</strong></span>
                     </div>

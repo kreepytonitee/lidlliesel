@@ -108,7 +108,7 @@ a:hover {
     border: 2px solid var(--accent-gold);
 }
 
-.top-banner .ad-content {
+.top-banner .banner-ad-content {
     display: flex;
     align-items: center;
     gap: 15px;
