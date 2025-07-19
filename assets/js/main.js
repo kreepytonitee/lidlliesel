@@ -1,7 +1,7 @@
 // Function to load affiliate data and display a random ad in the banner
-async function loadAffiliateBanner() {
+async function loadAffiliateBanner(dataPath) {
     try {
-        const response = await fetch('../data/affiliates.json'); // Adjusted path for chapter pages
+        const response = await fetch(`${dataPath}/affiliates.json`);
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -32,18 +32,16 @@ async function loadAffiliateBanner() {
 }
 
 // Function to handle the affiliate wall interaction
-async function handleAffiliateWall() {
+async function handleAffiliateWall(dataPath) {
     const affiliateWall = document.getElementById('affiliateWall');
     const chapterContent = document.getElementById('chapterContent');
     const unlockButton = document.getElementById('unlockChapterBtn');
 
-    // If elements aren't found, it means this page isn't using the wall, so show content.
     if (!affiliateWall || !chapterContent || !unlockButton) {
         if (chapterContent) chapterContent.classList.remove('hidden');
         return;
     }
 
-    // Check if the chapter has been unlocked in the current session
     const chapterUnlocked = sessionStorage.getItem('chapterUnlocked');
 
     if (chapterUnlocked === 'true') {
@@ -52,13 +50,12 @@ async function handleAffiliateWall() {
         return;
     }
 
-    // If not unlocked, display the wall and set up the button click listener
     affiliateWall.classList.remove('hidden');
     chapterContent.classList.add('hidden');
 
-    unlockButton.addEventListener('click', async () => {
+    unlockButton.onclick = async () => {
         try {
-            const response = await fetch('../data/affiliates.json'); // Adjusted path for chapter pages
+            const response = await fetch(`${dataPath}/affiliates.json`);
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
@@ -68,13 +65,11 @@ async function handleAffiliateWall() {
                 const randomIndex = Math.floor(Math.random() * affiliates.length);
                 const ad = affiliates[randomIndex];
 
-                // Open affiliate link in a new tab
                 window.open(ad.url, '_blank');
 
-                // Unlock content on the current page
                 affiliateWall.classList.add('hidden');
                 chapterContent.classList.remove('hidden');
-                sessionStorage.setItem('chapterUnlocked', 'true'); // Mark as unlocked for this session
+                sessionStorage.setItem('chapterUnlocked', 'true');
 
             } else {
                 console.warn("No affiliate links found. Unlocking chapter directly.");
@@ -84,20 +79,19 @@ async function handleAffiliateWall() {
             }
         } catch (error) {
             console.error("Error unlocking chapter via affiliate wall:", error);
-            // Fallback: unlock chapter even if there's an error fetching links
             affiliateWall.classList.add('hidden');
             chapterContent.classList.remove('hidden');
             sessionStorage.setItem('chapterUnlocked', 'true');
         }
-    });
+    };
 }
 
 // --- Homepage Search Functionality ---
 let allStories = []; // Global variable to store all stories data
 
-async function loadAndDisplayStories() {
+async function loadAndDisplayStories(dataPath) {
     const storiesListDiv = document.getElementById('storiesList');
-    const loadingMessage = document.getElementById('loadingStories'); // Should be removed in static generation but good fallback
+    const loadingMessage = document.getElementById('loadingStories');
 
     if (!storiesListDiv) {
         console.error("Stories list container not found.");
@@ -105,17 +99,19 @@ async function loadAndDisplayStories() {
     }
 
     try {
-        const response = await fetch('data/stories.json'); // Path relative to index.html
+        const response = await fetch(`${dataPath}/stories.json`);
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
         allStories = await response.json(); // Store all stories globally
 
         if (loadingMessage) {
-            loadingMessage.remove(); // Remove loading message once data is fetched
+            loadingMessage.remove();
         }
 
-        displayStories(allStories); // Display all stories initially
+        // Display ALL stories, ordered in reverse (latest first)
+        const reversedStories = [...allStories].reverse();
+        displayStories(reversedStories);
 
     } catch (error) {
         console.error("Error loading stories:", error);
@@ -128,12 +124,17 @@ async function loadAndDisplayStories() {
 }
 
 
-function displayStories(storiesToDisplay) {
-    const storiesListDiv = document.getElementById('storiesList');
-    storiesListDiv.innerHTML = ''; // Clear previous content
+function displayStories(storiesToDisplay, containerId = 'storiesList') { // Added containerId parameter
+    const containerDiv = document.getElementById(containerId);
+    if (!containerDiv) {
+        console.warn(`Container with ID "${containerId}" not found for displaying stories.`);
+        return;
+    }
+
+    containerDiv.innerHTML = ''; // Clear previous content
 
     if (storiesToDisplay.length === 0) {
-        storiesListDiv.innerHTML = '<p>No stories found matching your search criteria.</p>';
+        containerDiv.innerHTML = '<p>No stories found matching your criteria.</p>';
         return;
     }
 
@@ -152,21 +153,23 @@ function displayStories(storiesToDisplay) {
                 <span class="read-link">Read Story</span>
             </div>
         `;
-        storiesListDiv.appendChild(storyCard);
+        containerDiv.appendChild(storyCard);
     });
 }
 
 
 function filterStories() {
     const searchTerm = document.getElementById('searchBox').value.toLowerCase();
-    if (!allStories || allStories.length === 0) return;
+    if (!allStories || allStories.length === 0) {
+        console.warn("Search attempted before stories data was loaded.");
+        displayStories([]);
+        return;
+    }
 
     const filtered = allStories.filter(story => {
-        // Search in story title and description
         const matchesStory = story.title.toLowerCase().includes(searchTerm) ||
                              story.description.toLowerCase().includes(searchTerm);
 
-        // Search in chapter titles
         const matchesChapter = story.chapters.some(chapter =>
             chapter.title.toLowerCase().includes(searchTerm)
         );
@@ -179,11 +182,9 @@ function filterStories() {
 
 
 // --- Chapter Page Specific Logic ---
-
-// Function to initialize chapter page (title, navigation, affiliate wall)
-async function initializeChapterPage(currentStorySlug, currentChapterSlug) {
+async function initializeChapterPage(currentStorySlug, currentChapterSlug, dataPath) {
     try {
-        const response = await fetch('../../data/stories.json'); // Adjust path for chapter pages relative to story/slug/
+        const response = await fetch(`${dataPath}/stories.json`);
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -210,13 +211,9 @@ async function initializeChapterPage(currentStorySlug, currentChapterSlug) {
         const currentChapter = currentStory.chapters[chapterIndex];
         document.getElementById('chapterTitle').textContent = currentChapter.title;
 
-
-        // Set up navigation links and dropdown
         setupChapterNavigation(currentStory, chapterIndex);
-
-        // Initialize the affiliate wall
-        handleAffiliateWall();
-
+        handleAffiliateWall(dataPath);
+        displayRandomStorySuggestions(stories, currentStory.slug); // New function call
     } catch (error) {
         console.error("Error initializing chapter page:", error);
         document.getElementById('chapterTitle').textContent = "Error Loading Chapter";
@@ -224,46 +221,55 @@ async function initializeChapterPage(currentStorySlug, currentChapterSlug) {
 }
 
 function setupChapterNavigation(story, currentChapterIndex) {
+    // Top Navigation
+    const homeButtonTop = document.getElementById('homeButtonTop'); // New home button
     const prevChapterButtonTop = document.getElementById('prevChapterTop');
     const nextChapterButtonTop = document.getElementById('nextChapterTop');
     const chapterDropdownTop = document.getElementById('chapterDropdownTop');
 
+    // Bottom Navigation
+    const homeButtonBottom = document.getElementById('homeButtonBottom'); // New home button
     const prevChapterButtonBottom = document.getElementById('prevChapterBottom');
     const nextChapterButtonBottom = document.getElementById('nextChapterBottom');
     const chapterDropdownBottom = document.getElementById('chapterDropdownBottom');
 
+    // Set Home button links (always link to the root index.html)
+    if (homeButtonTop) homeButtonTop.href = '../../index.html';
+    if (homeButtonBottom) homeButtonBottom.href = '../../index.html';
 
-    // Populate dropdowns
+
+    // Populate dropdowns (function is created here to avoid repetition)
     const populateDropdown = (dropdownElement) => {
-        dropdownElement.innerHTML = ''; // Clear existing options
+        if (!dropdownElement) return;
+        dropdownElement.innerHTML = '';
         story.chapters.forEach((chapter, index) => {
             const option = document.createElement('option');
-            option.value = `./${chapter.slug}.html`; // Link to chapter HTML
-            option.textContent = chapter.title;
+            option.value = `./${chapter.slug}.html`;
+            option.textContent = `Chapter ${index + 1}: ${chapter.title}`;
             if (index === currentChapterIndex) {
                 option.selected = true;
             }
             dropdownElement.appendChild(option);
         });
 
-        // Add event listener for dropdown change
-        dropdownElement.addEventListener('change', (event) => {
+        dropdownElement.onchange = (event) => {
             window.location.href = event.target.value;
-        });
+        };
     };
 
-    if (chapterDropdownTop) populateDropdown(chapterDropdownTop);
-    if (chapterDropdownBottom) populateDropdown(chapterDropdownBottom);
+    populateDropdown(chapterDropdownTop);
+    populateDropdown(chapterDropdownBottom);
 
-
-    // Setup Previous/Next Buttons
+    // Setup Previous/Next Buttons (function created here to avoid repetition)
     const setupNavButtons = (prevBtn, nextBtn) => {
+        if (!prevBtn || !nextBtn) return;
+
         if (currentChapterIndex > 0) {
             const prevChapter = story.chapters[currentChapterIndex - 1];
             prevBtn.href = `./${prevChapter.slug}.html`;
             prevBtn.classList.remove('hidden');
         } else {
-            prevBtn.classList.add('hidden'); // Hide if no previous chapter
+            prevBtn.classList.add('hidden');
         }
 
         if (currentChapterIndex < story.chapters.length - 1) {
@@ -271,24 +277,52 @@ function setupChapterNavigation(story, currentChapterIndex) {
             nextBtn.href = `./${nextChapter.slug}.html`;
             nextBtn.classList.remove('hidden');
         } else {
-            nextBtn.classList.add('hidden'); // Hide if no next chapter
+            nextBtn.classList.add('hidden');
         }
     };
 
-    if (prevChapterButtonTop && nextChapterButtonTop) setupNavButtons(prevChapterButtonTop, nextChapterButtonTop);
-    if (prevChapterButtonBottom && nextChapterButtonBottom) setupNavButtons(prevChapterButtonBottom, nextChapterButtonBottom);
+    setupNavButtons(prevChapterButtonTop, nextChapterButtonTop);
+    setupNavButtons(prevChapterButtonBottom, nextChapterButtonBottom);
+}
+
+// New function for random story suggestions
+function displayRandomStorySuggestions(allStoriesData, currentStorySlug) {
+    const suggestionsContainer = document.getElementById('storySuggestions');
+    if (!suggestionsContainer) {
+        console.warn("Story suggestions container not found.");
+        return;
+    }
+
+    // Filter out the current story
+    const availableStories = allStoriesData.filter(story => story.slug !== currentStorySlug);
+
+    if (availableStories.length === 0) {
+        suggestionsContainer.innerHTML = '<p style="text-align: center; color: var(--text-dark);">No other stories available for suggestion.</p>';
+        return;
+    }
+
+    // Shuffle and pick 3 random stories
+    const shuffledStories = availableStories.sort(() => 0.5 - Math.random());
+    const randomSuggestions = shuffledStories.slice(0, 3);
+
+    if (randomSuggestions.length > 0) {
+        suggestionsContainer.innerHTML = `<h3>You might also like:</h3><div id="suggestionsGrid" class="suggestions-grid"></div>`;
+        displayStories(randomSuggestions, 'suggestionsGrid'); // Re-use displayStories with specific container ID
+    } else {
+        suggestionsContainer.innerHTML = '<p style="text-align: center; color: var(--text-dark);">Could not find other stories for suggestions.</p>';
+    }
 }
 
 
 // --- Event Listeners ---
 document.addEventListener('DOMContentLoaded', () => {
-    // Determine if on index.html or a chapter page
     const isChapterPage = window.location.pathname.includes('/story/');
+    let dataBasePath = '';
 
     if (!isChapterPage) {
-        // Homepage logic
-        loadAndDisplayStories(); // Load and display all stories initially
-        loadAffiliateBanner(); // Load banner on index page
+        dataBasePath = 'data';
+        loadAndDisplayStories(dataBasePath);
+        loadAffiliateBanner(dataBasePath);
 
         const searchBox = document.getElementById('searchBox');
         if (searchBox) {
@@ -300,13 +334,13 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
     } else {
-        // Chapter page logic
+        dataBasePath = '../../data';
         const pathSegments = window.location.pathname.split('/');
         const storySlug = pathSegments[pathSegments.length - 2];
         const chapterFileName = pathSegments[pathSegments.length - 1];
         const chapterSlug = chapterFileName.replace('.html', '');
 
-        initializeChapterPage(storySlug, chapterSlug);
-        loadAffiliateBanner(); // Load banner on chapter page
+        initializeChapterPage(storySlug, chapterSlug, dataBasePath);
+        loadAffiliateBanner(dataBasePath);
     }
 });

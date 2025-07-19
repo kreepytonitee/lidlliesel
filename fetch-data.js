@@ -68,6 +68,7 @@ function getChapterHtmlTemplate(storyTitle, chapterTitle, chapterContentHtml, na
         <h2 id="storyTitle">From: ${storyTitle}</h2>
 
         <div class="chapter-navigation">
+            <a href="../../index.html" id="homeButtonTop" class="nav-button">Home</a>
             <a href="${navLinks.prev}" id="prevChapterTop" class="nav-button ${navLinks.prev === '#' ? 'hidden' : ''}">&laquo; Previous Chapter</a>
             <select id="chapterDropdownTop" class="chapter-dropdown"></select>
             <a href="${navLinks.next}" id="nextChapterTop" class="nav-button ${navLinks.next === '#' ? 'hidden' : ''}">Next Chapter &raquo;</a>
@@ -83,10 +84,15 @@ function getChapterHtmlTemplate(storyTitle, chapterTitle, chapterContentHtml, na
         </div>
 
         <div class="chapter-navigation bottom">
+            <a href="../../index.html" id="homeButtonBottom" class="nav-button">Home</a>
             <a href="${navLinks.prev}" id="prevChapterBottom" class="nav-button ${navLinks.prev === '#' ? 'hidden' : ''}">&laquo; Previous Chapter</a>
             <select id="chapterDropdownBottom" class="chapter-dropdown"></select>
             <a href="${navLinks.next}" id="nextChapterBottom" class="nav-button ${navLinks.next === '#' ? 'hidden' : ''}">Next Chapter &raquo;</a>
         </div>
+
+        <div id="storySuggestions" class="story-suggestions">
+            </div>
+
     </div>
 
     <footer>
@@ -101,15 +107,15 @@ function getChapterHtmlTemplate(storyTitle, chapterTitle, chapterContentHtml, na
             const chapterFileName = pathSegments[pathSegments.length - 1];
             const chapterSlug = chapterFileName.replace('.html', '');
 
-            initializeChapterPage(storySlug, chapterSlug);
-            loadAffiliateBanner();
+            initializeChapterPage(storySlug, chapterSlug, '../../data'); // Pass dataPath directly here too
+            loadAffiliateBanner('../../data'); // Pass dataPath directly here too
         });
     </script>
 </body>
 </html>`;
 }
 
-// --- Main Generation Logic ---
+// --- Main Generation Logic (no changes needed here, only in template function) ---
 async function generateWebsite() {
     console.log(`[${new Date().toLocaleTimeString()}] Starting website generation...`);
 
@@ -249,15 +255,12 @@ async function generateWebsite() {
     }
 
     // 3. Save the main stories.json file
-    // Note: The `stories.json` will contain all stories in the order they were fetched from the index sheet.
-    // The homepage JavaScript will handle display order and search.
     await fs.writeJson(path.join(DATA_DIR, 'stories.json'), allStoriesData, { spaces: 4 });
     console.log(`[${new Date().toLocaleTimeString()}] Saved main stories data to ${DATA_DIR}/stories.json`);
 
     // 4. Generate index.html (home page)
     console.log(`[${new Date().toLocaleTimeString()}] Generating index.html...`);
 
-    // The index.html now contains a placeholder div for storiesList, which main.js will populate and sort.
     const indexHtmlContent = `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -280,7 +283,7 @@ async function generateWebsite() {
             <button id="searchButton">Search</button>
         </div>
 
-        <h2>Latest Stories</h2>
+        <h2>All Stories</h2>
         <div id="storiesList" class="stories-grid">
             <p id="loadingStories">Loading stories...</p>
             </div>
