@@ -104,13 +104,13 @@ async function handleAffiliateWall(dataPath) {
             // 'noopener,noreferrer' for security best practices
             const newTab = window.open(selectedAd.link_url, '_blank', 'noopener,noreferrer');
 
-            // Optional: Check if the pop-up was blocked (though less likely now with immediate open)
-            if (!newTab || newTab.closed || typeof newTab.focus !== 'function') {
-                alert('Pop-up blocked! Please allow pop-ups for this site to unlock the chapter.');
-                unlockButton.disabled = false; // Re-enable button
-                unlockButton.textContent = originalButtonText; // Reset button text
-                return; // Stop if pop-up was blocked
-            }
+            // // Optional: Check if the pop-up was blocked (though less likely now with immediate open)
+            // if (!newTab || newTab.closed || typeof newTab.focus !== 'function') {
+            //     alert('Pop-up blocked! Please allow pop-ups for this site to unlock the chapter.');
+            //     unlockButton.disabled = false; // Re-enable button
+            //     unlockButton.textContent = originalButtonText; // Reset button text
+            //     return; // Stop if pop-up was blocked
+            // }
         } else {
             console.warn("No ad available to open. Unlocking chapter directly.");
         }
