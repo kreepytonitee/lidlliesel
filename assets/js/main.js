@@ -111,6 +111,7 @@ async function handleAffiliateWall(dataPath) {
             //     unlockButton.textContent = originalButtonText; // Reset button text
             //     return; // Stop if pop-up was blocked
             // }
+            
         } else {
             console.warn("No ad available to open. Unlocking chapter directly.");
         }
