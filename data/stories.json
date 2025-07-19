@@ -3,7 +3,7 @@
         "slug": "rotkaeppchen",
         "title": "Rotkäppchen",
         "description": "Ein klassisches Märchen der Brüder Grimm.",
-        "cover_image_url": "/assets/images/covers/Rotkaeppchen_maerchen_01.jpg",
+        "cover_image_url": "assets/images/covers/Rotkaeppchen_maerchen_01.jpg",
         "chapters": [
             {
                 "slug": "chapter-1",
@@ -19,7 +19,7 @@
         "slug": "my-epic-saga",
         "title": "My Epic Saga",
         "description": "A grand adventure across many lands and hundreds of chapters.",
-        "cover_image_url": "assets/images/covers/saga.jpg",
+        "cover_image_url": "assets/images/covers/7df5c40c07947eeed24ae5061acd39f8_1024x1024.jpg",
         "chapters": [
             {
                 "slug": "chapter-1",
