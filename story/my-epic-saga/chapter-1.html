@@ -16,6 +16,7 @@
         <h2 id="storyTitle">From: My Epic Saga</h2>
 
         <div class="chapter-navigation">
+            <a href="../../index.html" id="homeButtonTop" class="nav-button">Home</a>
             <a href="#" id="prevChapterTop" class="nav-button hidden">&laquo; Previous Chapter</a>
             <select id="chapterDropdownTop" class="chapter-dropdown"></select>
             <a href="./chapter-2.html" id="nextChapterTop" class="nav-button ">Next Chapter &raquo;</a>
@@ -41,10 +42,15 @@
         </div>
 
         <div class="chapter-navigation bottom">
+            <a href="../../index.html" id="homeButtonBottom" class="nav-button">Home</a>
             <a href="#" id="prevChapterBottom" class="nav-button hidden">&laquo; Previous Chapter</a>
             <select id="chapterDropdownBottom" class="chapter-dropdown"></select>
             <a href="./chapter-2.html" id="nextChapterBottom" class="nav-button ">Next Chapter &raquo;</a>
         </div>
+
+        <div id="storySuggestions" class="story-suggestions">
+            </div>
+
     </div>
 
     <footer>
@@ -59,8 +65,8 @@
             const chapterFileName = pathSegments[pathSegments.length - 1];
             const chapterSlug = chapterFileName.replace('.html', '');
 
-            initializeChapterPage(storySlug, chapterSlug);
-            loadAffiliateBanner();
+            initializeChapterPage(storySlug, chapterSlug, '../../data'); // Pass dataPath directly here too
+            loadAffiliateBanner('../../data'); // Pass dataPath directly here too
         });
     </script>
 </body>
