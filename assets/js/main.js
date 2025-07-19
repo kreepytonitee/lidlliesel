@@ -171,7 +171,7 @@ async function loadAndDisplayStories(dataPath) {
 
 
 // Function to display story cards in a given container
-function displayStories(storiesToDisplay, containerId = 'storiesList', isSuggestion = false) { // Added isSuggestion flag
+function displayStories(storiesToDisplay, containerId = 'storiesList', isSuggestion = false) {
     const containerDiv = document.getElementById(containerId);
     if (!containerDiv) {
         console.warn(`Container with ID "${containerId}" not found for displaying stories.`);
@@ -186,33 +186,33 @@ function displayStories(storiesToDisplay, containerId = 'storiesList', isSuggest
     }
 
     storiesToDisplay.forEach(story => {
-        // Ensure this path is always relative to the site root, not the current chapter's directory
-        const firstChapterLink = story.chapters.length > 0 ? `story/${story.slug}/${story.chapters[0].slug}.html` : '#';
-
-        const storyCard = document.createElement('a');
-        // Prepend '../' for suggestions to ensure it's relative to the site root from a chapter page context
-        // This is a bit of a hack for local file paths.
-        // For a deployed site, you'd typically use /story/${story.slug}/...
-        // For local development via 'file://', this adjustment is necessary if displayStories is called from a chapter page.
-        // However, the simplest robust fix is to generate the URL relative to the current page.
-        // Let's make it smarter based on the page's current depth.
-
-        // Determine the correct prefix based on whether we are on a chapter page
+        // Determine the correct prefix for both the story link and the image URL
         let linkPrefix = '';
+        let imageSrcPrefix = '';
+
         if (isSuggestion) {
             // When displaying suggestions from a chapter page, we need to go up two levels
             linkPrefix = '../../';
+            imageSrcPrefix = '../../'; // Also apply this prefix to the image source
         }
+        // else (for homepage), prefixes remain empty
 
-        storyCard.href = `${linkPrefix}${firstChapterLink}`; // Apply the determined prefix
+        const firstChapterLink = story.chapters.length > 0 ? `${linkPrefix}story/${story.slug}/${story.chapters[0].slug}.html` : '#';
+        
+        // Construct the full image source URL
+        const fullCoverImageUrl = story.cover_image_url ? `${imageSrcPrefix}${story.cover_image_url}` : '';
+
+
+        const storyCard = document.createElement('a');
+        storyCard.href = firstChapterLink;
         storyCard.classList.add('story-card');
-        // Add a class for suggestions to apply specific CSS later
+        // Add a class for suggestions to apply specific CSS later (if you want different styles)
         if (isSuggestion) {
             storyCard.classList.add('suggestion-card');
         }
-        // ... rest of the story card innerHTML (no changes here) ...
+
         storyCard.innerHTML = `
-            ${story.cover_image_url ? `<img src="${story.cover_image_url}" alt="${story.title} Cover">` : ''}
+            ${fullCoverImageUrl ? `<img src="${fullCoverImageUrl}" alt="${story.title} Cover">` : ''}
             <div class="story-card-content">
                 <h3>${story.title}</h3>
                 <p>${story.description}</p>
