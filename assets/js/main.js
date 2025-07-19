@@ -15,11 +15,12 @@ async function loadAffiliateBanner(dataPath) {
             if (topBanner) {
                 topBanner.innerHTML = `
                     <div class="ad-content">
-                        ${ad.image_url ? `<img src="${ad.image_url}" alt="${ad.name || 'Partner Ad'}">` : ''}
-                        <span>Check out our partner: <strong>${ad.name || 'Our Partner'}</strong></span>
+                        ${ad.image_url ? `<img src="${ad.image_url}" alt="${ad.alt_text || ad.product_name || 'Partner Ad'}">` : ''}
+                        <span>Check out our partner: <strong>${ad.product_name || 'Our Partner'}</strong></span>
                     </div>
-                    <a href="${ad.url}" target="_blank" rel="noopener noreferrer">Visit Now!</a>
+                    <a href="${ad.link_url}" target="_blank" rel="noopener noreferrer">Visit Now!</a>
                 `;
+                // Also update alt text and name for better consistency
             }
         }
     } catch (error) {
@@ -36,12 +37,14 @@ async function handleAffiliateWall(dataPath) {
     const affiliateWall = document.getElementById('affiliateWall');
     const chapterContent = document.getElementById('chapterContent');
     const unlockButton = document.getElementById('unlockChapterBtn');
+    const originalButtonText = unlockButton ? unlockButton.textContent : 'Unlock Chapter by Visiting a Partner'; // Store original text
 
     if (!affiliateWall || !chapterContent || !unlockButton) {
         if (chapterContent) chapterContent.classList.remove('hidden');
         return;
     }
 
+    // Check session storage immediately
     const chapterUnlocked = sessionStorage.getItem('chapterUnlocked');
 
     if (chapterUnlocked === 'true') {
@@ -50,39 +53,82 @@ async function handleAffiliateWall(dataPath) {
         return;
     }
 
+    // If not unlocked, display the wall
     affiliateWall.classList.remove('hidden');
     chapterContent.classList.add('hidden');
 
     unlockButton.onclick = async () => {
-        try {
-            const response = await fetch(`${dataPath}/affiliates.json`);
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            const affiliates = await response.json();
+        // Disable button immediately to prevent multiple clicks
+        unlockButton.disabled = true;
 
-            if (affiliates.length > 0) {
-                const randomIndex = Math.floor(Math.random() * affiliates.length);
-                const ad = affiliates[randomIndex];
+        let secondsLeft = 5;
+        unlockButton.textContent = `Please wait ${secondsLeft}s...`;
 
-                window.open(ad.url, '_blank');
-
-                affiliateWall.classList.add('hidden');
-                chapterContent.classList.remove('hidden');
-                sessionStorage.setItem('chapterUnlocked', 'true');
-
+        const countdownInterval = setInterval(() => {
+            secondsLeft--;
+            if (secondsLeft > 0) {
+                unlockButton.textContent = `Please wait ${secondsLeft}s...`;
             } else {
-                console.warn("No affiliate links found. Unlocking chapter directly.");
-                affiliateWall.classList.add('hidden');
-                chapterContent.classList.remove('hidden');
-                sessionStorage.setItem('chapterUnlocked', 'true');
+                clearInterval(countdownInterval); // Stop the countdown
+                unlockButton.textContent = 'Opening Partner Link...'; // Indicate action
+
+                // --- Open the affiliate link AFTER the countdown ---
+                try {
+                    // Fetch affiliates data to get a random link
+                    fetch(`${dataPath}/affiliates.json`)
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error(`HTTP error! status: ${response.status}`);
+                            }
+                            return response.json();
+                        })
+                        .then(affiliates => {
+                            if (affiliates.length > 0) {
+                                const randomIndex = Math.floor(Math.random() * affiliates.length);
+                                const ad = affiliates[randomIndex];
+
+                                // Ensure ad.link_url is used, as identified in previous debug
+                                window.open(ad.link_url, '_blank');
+
+                                // Unlock chapter content and store in session storage
+                                affiliateWall.classList.add('hidden');
+                                chapterContent.classList.remove('hidden');
+                                sessionStorage.setItem('chapterUnlocked', 'true');
+
+                                // Re-enable button and reset text for next chapter if applicable (though unlikely to be clicked again immediately)
+                                unlockButton.disabled = false;
+                                unlockButton.textContent = originalButtonText;
+
+                            } else {
+                                console.warn("No affiliate links found. Unlocking chapter directly.");
+                                affiliateWall.classList.add('hidden');
+                                chapterContent.classList.remove('hidden');
+                                sessionStorage.setItem('chapterUnlocked', 'true');
+                                unlockButton.disabled = false;
+                                unlockButton.textContent = originalButtonText;
+                            }
+                        })
+                        .catch(error => {
+                            console.error("Error fetching affiliates for wall or opening link:", error);
+                            // Fallback: unlock chapter even if there's an error fetching the ad
+                            affiliateWall.classList.add('hidden');
+                            chapterContent.classList.remove('hidden');
+                            sessionStorage.setItem('chapterUnlocked', 'true');
+                            unlockButton.disabled = false;
+                            unlockButton.textContent = originalButtonText;
+                        });
+
+                } catch (error) {
+                    console.error("Error during affiliate wall interaction setup:", error);
+                    // Fallback: unlock chapter even if there's an error
+                    affiliateWall.classList.add('hidden');
+                    chapterContent.classList.remove('hidden');
+                    sessionStorage.setItem('chapterUnlocked', 'true');
+                    unlockButton.disabled = false;
+                    unlockButton.textContent = originalButtonText;
+                }
             }
-        } catch (error) {
-            console.error("Error unlocking chapter via affiliate wall:", error);
-            affiliateWall.classList.add('hidden');
-            chapterContent.classList.remove('hidden');
-            sessionStorage.setItem('chapterUnlocked', 'true');
-        }
+        }, 1000); // Update every 1 second
     };
 }
 
