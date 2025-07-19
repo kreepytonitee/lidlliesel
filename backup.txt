@@ -1,0 +1,1 @@
+Second working version: added 2 way 2 places navigation with dropdown, search box, brown theme with some blue/green, ads still not working.
