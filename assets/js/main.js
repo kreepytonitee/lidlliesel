@@ -124,7 +124,8 @@ async function loadAndDisplayStories(dataPath) {
 }
 
 
-function displayStories(storiesToDisplay, containerId = 'storiesList') { // Added containerId parameter
+// Function to display story cards in a given container
+function displayStories(storiesToDisplay, containerId = 'storiesList', isSuggestion = false) { // Added isSuggestion flag
     const containerDiv = document.getElementById(containerId);
     if (!containerDiv) {
         console.warn(`Container with ID "${containerId}" not found for displaying stories.`);
@@ -139,12 +140,31 @@ function displayStories(storiesToDisplay, containerId = 'storiesList') { // Adde
     }
 
     storiesToDisplay.forEach(story => {
+        // Ensure this path is always relative to the site root, not the current chapter's directory
         const firstChapterLink = story.chapters.length > 0 ? `story/${story.slug}/${story.chapters[0].slug}.html` : '#';
 
         const storyCard = document.createElement('a');
-        storyCard.href = firstChapterLink;
-        storyCard.classList.add('story-card');
+        // Prepend '../' for suggestions to ensure it's relative to the site root from a chapter page context
+        // This is a bit of a hack for local file paths.
+        // For a deployed site, you'd typically use /story/${story.slug}/...
+        // For local development via 'file://', this adjustment is necessary if displayStories is called from a chapter page.
+        // However, the simplest robust fix is to generate the URL relative to the current page.
+        // Let's make it smarter based on the page's current depth.
 
+        // Determine the correct prefix based on whether we are on a chapter page
+        let linkPrefix = '';
+        if (isSuggestion) {
+            // When displaying suggestions from a chapter page, we need to go up two levels
+            linkPrefix = '../../';
+        }
+
+        storyCard.href = `${linkPrefix}${firstChapterLink}`; // Apply the determined prefix
+        storyCard.classList.add('story-card');
+        // Add a class for suggestions to apply specific CSS later
+        if (isSuggestion) {
+            storyCard.classList.add('suggestion-card');
+        }
+        // ... rest of the story card innerHTML (no changes here) ...
         storyCard.innerHTML = `
             ${story.cover_image_url ? `<img src="${story.cover_image_url}" alt="${story.title} Cover">` : ''}
             <div class="story-card-content">
@@ -307,7 +327,7 @@ function displayRandomStorySuggestions(allStoriesData, currentStorySlug) {
 
     if (randomSuggestions.length > 0) {
         suggestionsContainer.innerHTML = `<h3>You might also like:</h3><div id="suggestionsGrid" class="suggestions-grid"></div>`;
-        displayStories(randomSuggestions, 'suggestionsGrid'); // Re-use displayStories with specific container ID
+        displayStories(randomSuggestions, 'suggestionsGrid', true); // Re-use displayStories with specific container ID, pass true for isSuggestion
     } else {
         suggestionsContainer.innerHTML = '<p style="text-align: center; color: var(--text-dark);">Could not find other stories for suggestions.</p>';
     }
