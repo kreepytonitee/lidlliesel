@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dual Language Stories - Learn with Reading</title>
+    <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="assets/css/styles.css">
 </head>
 <body>
@@ -14,27 +15,15 @@
         <h1>Welcome to Dual Language Stories!</h1>
         <p class="tagline">Read engaging stories side-by-side in two languages to boost your learning.</p>
 
-        <div id="storiesList" class="stories-grid">
-            
-        <a href="story/rotkaeppchen/chapter-1.html" class="story-card">
-            <img src="/assets/images/covers/Rotkaeppchen_maerchen_01.jpg" alt="Rotkäppchen Cover">
-            <div class="story-card-content">
-                <h3>Rotkäppchen</h3>
-                <p>Ein klassisches Märchen der Brüder Grimm.</p>
-                <span class="read-link">Read Story</span>
-            </div>
-        </a>
-        
-        <a href="story/my-epic-saga/chapter-1.html" class="story-card">
-            <img src="assets/images/covers/saga.jpg" alt="My Epic Saga Cover">
-            <div class="story-card-content">
-                <h3>My Epic Saga</h3>
-                <p>A grand adventure across many lands and hundreds of chapters.</p>
-                <span class="read-link">Read Story</span>
-            </div>
-        </a>
-        
+        <div class="search-container">
+            <input type="text" id="searchBox" placeholder="Search stories or chapters...">
+            <button id="searchButton">Search</button>
         </div>
+
+        <h2>Latest Stories</h2>
+        <div id="storiesList" class="stories-grid">
+            <p id="loadingStories">Loading stories...</p>
+            </div>
     </div>
 
     <footer>
@@ -42,11 +31,5 @@
     </footer>
 
     <script src="assets/js/main.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // For the index page, stories are now statically generated, no need for loadStories()
-            loadAffiliateBanner(); // Load banner on index page
-        });
-    </script>
 </body>
 </html>

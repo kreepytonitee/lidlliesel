@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>The Great Reveal - My Epic Saga</title>
+    <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../../assets/css/styles.css">
 </head>
 <body>
@@ -15,9 +16,9 @@
         <h2 id="storyTitle">From: My Epic Saga</h2>
 
         <div class="chapter-navigation">
-            <a href="./chapter-2.html" id="prevChapter" class="nav-button ">&laquo; Previous Chapter</a>
-            <a href="index.html" class="nav-button">Back to Stories</a>
-            <a href="#" id="nextChapter" class="nav-button hidden">Next Chapter &raquo;</a>
+            <a href="./chapter-2.html" id="prevChapterTop" class="nav-button ">&laquo; Previous Chapter</a>
+            <select id="chapterDropdownTop" class="chapter-dropdown"></select>
+            <a href="#" id="nextChapterTop" class="nav-button hidden">Next Chapter &raquo;</a>
         </div>
 
         <div id="affiliateWall" class="affiliate-wall">
@@ -38,6 +39,12 @@
                 </div>
                 
         </div>
+
+        <div class="chapter-navigation bottom">
+            <a href="./chapter-2.html" id="prevChapterBottom" class="nav-button ">&laquo; Previous Chapter</a>
+            <select id="chapterDropdownBottom" class="chapter-dropdown"></select>
+            <a href="#" id="nextChapterBottom" class="nav-button hidden">Next Chapter &raquo;</a>
+        </div>
     </div>
 
     <footer>
@@ -47,10 +54,13 @@
     <script src="../../assets/js/main.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // No need to dynamically get story/chapter slug from URL as content is static
-            // initializeChapterPage in main.js is now simplified to only handle wall and banner
-            loadAffiliateBanner(); // This now explicitly ensures banner loads on chapter pages
-            handleAffiliateWall(); // Ensure affiliate wall logic is executed
+            const pathSegments = window.location.pathname.split('/');
+            const storySlug = pathSegments[pathSegments.length - 2];
+            const chapterFileName = pathSegments[pathSegments.length - 1];
+            const chapterSlug = chapterFileName.replace('.html', '');
+
+            initializeChapterPage(storySlug, chapterSlug);
+            loadAffiliateBanner();
         });
     </script>
 </body>
