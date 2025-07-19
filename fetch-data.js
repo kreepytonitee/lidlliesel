@@ -5,21 +5,16 @@ const path = require('path');
 
 // --- Configuration ---
 // !! IMPORTANT: Replace these with your actual published Google Sheet CSV URLs !!
-// Go to File > Share > Publish to web > Choose Sheet > Choose Comma-separated values (.csv)
-const GOOGLE_SHEET_AFFILIATES_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vT67jcSPIYlnqUd7VKAGRbE8awSxXnnQEjQUPuse7GUbaKfcFIAah2ZS6j_Uxc0yaPfbg2w8wm0pSz8/pub?gid=0&single=true&output=csv'; // e.g., 'https://docs.google.com/spreadsheets/d/e/2PACX-1vR_XYZ/pub?gid=0&single=true&output=csv'
-const GOOGLE_SHEET_STORIES_INDEX_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRi9707BGQFlLbKg71_QzV4-tbYu0iJ1JVfUGD1Z2Qxm4Yez9nJEGLalpXmCFTfwjz4NFe1Yzibifx9/pub?gid=0&single=true&output=csv'; // e.g., 'https://docs.google.com/spreadsheets/d/e/2PACX-1vR_ABC/pub?gid=12345&single=true&output=csv'
+const GOOGLE_SHEET_AFFILIATES_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vT67jcSPIYlnqUd7VKAGRbE8awSxXnnQEjQUPuse7GUbaKfcFIAah2ZS6j_Uxc0yaPfbg2w8wm0pSz8/pub?gid=0&single=true&output=csv';
+const GOOGLE_SHEET_STORIES_INDEX_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRi9707BGQFlLbKg71_QzV4-tbYu0iJ1JVfUGD1Z2Qxm4Yez9nJEGLalpXmCFTfwjz4NFe1Yzibifx9/pub?gid=0&single=true&output=csv';
 
-const OUTPUT_DIR = './'; // Root of your GitHub Pages repo (where index.html, data/, story/ will be generated)
+// Assuming script is run from the 'lidlliesel' directory (repo root)
+const OUTPUT_DIR = './';
 const DATA_DIR = path.join(OUTPUT_DIR, 'data');
 const STORY_BASE_DIR = path.join(OUTPUT_DIR, 'story');
 
 // --- Helper Functions ---
 
-/**
- * Fetches and parses CSV data from a URL.
- * @param {string} url - The URL of the CSV file.
- * @returns {Array<Object>} An array of objects, where each object represents a row.
- */
 async function fetchCsvData(url) {
     if (!url || url === 'YOUR_AFFILIATES_SHEET_CSV_URL_HERE' || url === 'YOUR_STORIES_INDEX_SHEET_CSV_URL_HERE') {
         throw new Error(`Invalid or placeholder CSV URL: ${url}. Please update the script with your actual Google Sheet URLs.`);
@@ -31,10 +26,16 @@ async function fetchCsvData(url) {
     }
     const csv = await response.text();
     const records = parse(csv, {
-        columns: true, // Treat first row as column headers
+        columns: true,
         skip_empty_lines: true,
-        trim: true     // Trim whitespace from values
+        trim: true
     });
+
+    if (records.length > 0) {
+        console.log(`[DEBUG] First record's keys (from ${url}):`, Object.keys(records[0]));
+        console.log(`[DEBUG] First record (from ${url}):`, records[0]);
+    }
+
     return records;
 }
 
@@ -47,16 +48,7 @@ async function fetchCsvData(url) {
  * @returns {string} The full HTML content for the chapter page.
  */
 function getChapterHtmlTemplate(storyTitle, chapterTitle, chapterContentHtml, navLinks) {
-    // Relative path from chapter HTML file (e.g., story/slug/chapter-1.html) to assets (assets/css/styles.css)
     const relativePathToAssets = '../../assets';
-    // The main.js script will be shared, so it also needs the relative path.
-    // We can rely on main.js using relative paths from its current location,
-    // or pass base paths to it if dynamic fetching is needed from main.js.
-    // For this setup, main.js fetches data/stories.json from its own location relative to chapter page.
-    // So if main.js is at assets/js/main.js and data is at data/,
-    // from story/slug/chapter-X.html, it's ../../data/stories.json.
-    // The main.js will use ../data/affiliates.json and ../../data/stories.json (for chapter pages)
-    // The main.js script itself is loaded with ../../assets/js/main.js
 
     return `<!DOCTYPE html>
 <html lang="en">
@@ -64,6 +56,7 @@ function getChapterHtmlTemplate(storyTitle, chapterTitle, chapterContentHtml, na
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>${chapterTitle} - ${storyTitle}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="${relativePathToAssets}/css/styles.css">
 </head>
 <body>
@@ -75,9 +68,9 @@ function getChapterHtmlTemplate(storyTitle, chapterTitle, chapterContentHtml, na
         <h2 id="storyTitle">From: ${storyTitle}</h2>
 
         <div class="chapter-navigation">
-            <a href="${navLinks.prev}" id="prevChapter" class="nav-button ${navLinks.prev === '#' ? 'hidden' : ''}">&laquo; Previous Chapter</a>
-            <a href="${path.join(OUTPUT_DIR, 'index.html')}" class="nav-button">Back to Stories</a>
-            <a href="${navLinks.next}" id="nextChapter" class="nav-button ${navLinks.next === '#' ? 'hidden' : ''}">Next Chapter &raquo;</a>
+            <a href="${navLinks.prev}" id="prevChapterTop" class="nav-button ${navLinks.prev === '#' ? 'hidden' : ''}">&laquo; Previous Chapter</a>
+            <select id="chapterDropdownTop" class="chapter-dropdown"></select>
+            <a href="${navLinks.next}" id="nextChapterTop" class="nav-button ${navLinks.next === '#' ? 'hidden' : ''}">Next Chapter &raquo;</a>
         </div>
 
         <div id="affiliateWall" class="affiliate-wall">
@@ -88,6 +81,12 @@ function getChapterHtmlTemplate(storyTitle, chapterTitle, chapterContentHtml, na
         <div id="chapterContent" class="chapter-content hidden">
             ${chapterContentHtml}
         </div>
+
+        <div class="chapter-navigation bottom">
+            <a href="${navLinks.prev}" id="prevChapterBottom" class="nav-button ${navLinks.prev === '#' ? 'hidden' : ''}">&laquo; Previous Chapter</a>
+            <select id="chapterDropdownBottom" class="chapter-dropdown"></select>
+            <a href="${navLinks.next}" id="nextChapterBottom" class="nav-button ${navLinks.next === '#' ? 'hidden' : ''}">Next Chapter &raquo;</a>
+        </div>
     </div>
 
     <footer>
@@ -97,10 +96,13 @@ function getChapterHtmlTemplate(storyTitle, chapterTitle, chapterContentHtml, na
     <script src="${relativePathToAssets}/js/main.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // No need to dynamically get story/chapter slug from URL as content is static
-            // initializeChapterPage in main.js is now simplified to only handle wall and banner
-            loadAffiliateBanner(); // This now explicitly ensures banner loads on chapter pages
-            handleAffiliateWall(); // Ensure affiliate wall logic is executed
+            const pathSegments = window.location.pathname.split('/');
+            const storySlug = pathSegments[pathSegments.length - 2];
+            const chapterFileName = pathSegments[pathSegments.length - 1];
+            const chapterSlug = chapterFileName.replace('.html', '');
+
+            initializeChapterPage(storySlug, chapterSlug);
+            loadAffiliateBanner();
         });
     </script>
 </body>
@@ -111,7 +113,7 @@ function getChapterHtmlTemplate(storyTitle, chapterTitle, chapterContentHtml, na
 async function generateWebsite() {
     console.log(`[${new Date().toLocaleTimeString()}] Starting website generation...`);
 
-    // Create necessary directories
+    // Ensure output directories exist relative to OUTPUT_DIR
     await fs.ensureDir(DATA_DIR);
     await fs.ensureDir(STORY_BASE_DIR);
 
@@ -149,31 +151,30 @@ async function generateWebsite() {
         const storyTitle = story.title;
         const storyDescription = story.description;
         const storyCoverImageUrl = story.cover_image_url;
-        const storyContentCsvUrl = story.content_csv_url; // New column for story content URL
+        const storyContentCsvUrl = story.content_csv_url;
 
         console.log(`[${new Date().toLocaleTimeString()}] Processing story: "${storyTitle}" (Slug: ${storySlug})`);
 
         const storyDir = path.join(STORY_BASE_DIR, storySlug);
-        await fs.ensureDir(storyDir); // Create directory for each story (e.g., 'story/the-little-prince')
+        await fs.ensureDir(storyDir);
 
         let storyParagraphs = [];
         try {
             storyParagraphs = await fetchCsvData(storyContentCsvUrl);
             if (storyParagraphs.length === 0) {
                 console.warn(`[${new Date().toLocaleTimeString()}] No content found for story "${storyTitle}" at ${storyContentCsvUrl}. Skipping chapters.`);
-                continue; // Skip to next story if no paragraphs are found
+                continue;
             }
         } catch (error) {
             console.error(`[${new Date().toLocaleTimeString()}] ERROR: Could not fetch content for story "${storyTitle}" from ${storyContentCsvUrl}: ${error.message}`);
             console.warn(`[${new Date().toLocaleTimeString()}] Please check the 'content_csv_url' for story '${storySlug}' in your index sheet.`);
-            continue; // Skip to next story on error
+            continue;
         }
 
         const chaptersMap = new Map(); // Map to store chapters: { chapter_slug: { title: '...', paragraphs: [] } }
 
         // Group paragraphs by chapter_slug
         storyParagraphs.forEach((row, index) => {
-            // Validate required columns
             if (!row.chapter_slug || !row.chapter_title || row.paragraph_lang1 === undefined || row.paragraph_lang2 === undefined) {
                 console.warn(`[${new Date().toLocaleTimeString()}] WARNING: Missing required data in row ${index + 2} of story content for "${storyTitle}". Skipping row.`, row);
                 return;
@@ -195,13 +196,12 @@ async function generateWebsite() {
 
         const storyChaptersData = []; // To store chapter metadata for stories.json, in order
         const sortedChapterSlugs = Array.from(chaptersMap.keys()).sort((a, b) => {
-            // Basic numeric sort if slugs are 'chapter-1', 'chapter-2', etc.
             const numA = parseInt(a.replace('chapter-', ''), 10);
             const numB = parseInt(b.replace('chapter-', ''), 10);
             if (!isNaN(numA) && !isNaN(numB)) {
                 return numA - numB;
             }
-            return a.localeCompare(b); // Fallback for non-numeric slugs
+            return a.localeCompare(b);
         });
 
         for (let i = 0; i < sortedChapterSlugs.length; i++) {
@@ -244,38 +244,27 @@ async function generateWebsite() {
             title: storyTitle,
             description: storyDescription,
             cover_image_url: storyCoverImageUrl,
-            chapters: storyChaptersData // Store the sorted list of chapters
+            chapters: storyChaptersData
         });
     }
 
     // 3. Save the main stories.json file
+    // Note: The `stories.json` will contain all stories in the order they were fetched from the index sheet.
+    // The homepage JavaScript will handle display order and search.
     await fs.writeJson(path.join(DATA_DIR, 'stories.json'), allStoriesData, { spaces: 4 });
     console.log(`[${new Date().toLocaleTimeString()}] Saved main stories data to ${DATA_DIR}/stories.json`);
 
     // 4. Generate index.html (home page)
     console.log(`[${new Date().toLocaleTimeString()}] Generating index.html...`);
 
-    const indexStoryCardsHtml = allStoriesData.length > 0 ? allStoriesData.map(story => {
-        // Ensure story.chapters[0] exists before trying to access its slug
-        const firstChapterLink = story.chapters.length > 0 ? `story/${story.slug}/${story.chapters[0].slug}.html` : '#';
-        return `
-        <a href="${firstChapterLink}" class="story-card">
-            ${story.cover_image_url ? `<img src="${story.cover_image_url}" alt="${story.title} Cover">` : ''}
-            <div class="story-card-content">
-                <h3>${story.title}</h3>
-                <p>${story.description}</p>
-                <span class="read-link">Read Story</span>
-            </div>
-        </a>
-        `;
-    }).join('') : '<p>No stories available yet. Please check back later!</p>';
-
+    // The index.html now contains a placeholder div for storiesList, which main.js will populate and sort.
     const indexHtmlContent = `<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dual Language Stories - Learn with Reading</title>
+    <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="assets/css/styles.css">
 </head>
 <body>
@@ -286,9 +275,15 @@ async function generateWebsite() {
         <h1>Welcome to Dual Language Stories!</h1>
         <p class="tagline">Read engaging stories side-by-side in two languages to boost your learning.</p>
 
-        <div id="storiesList" class="stories-grid">
-            ${indexStoryCardsHtml}
+        <div class="search-container">
+            <input type="text" id="searchBox" placeholder="Search stories or chapters...">
+            <button id="searchButton">Search</button>
         </div>
+
+        <h2>Latest Stories</h2>
+        <div id="storiesList" class="stories-grid">
+            <p id="loadingStories">Loading stories...</p>
+            </div>
     </div>
 
     <footer>
@@ -296,12 +291,6 @@ async function generateWebsite() {
     </footer>
 
     <script src="assets/js/main.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // For the index page, stories are now statically generated, no need for loadStories()
-            loadAffiliateBanner(); // Load banner on index page
-        });
-    </script>
 </body>
 </html>`;
 

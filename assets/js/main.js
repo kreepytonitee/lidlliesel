@@ -1,7 +1,7 @@
 // Function to load affiliate data and display a random ad in the banner
 async function loadAffiliateBanner() {
     try {
-        const response = await fetch('../data/affiliates.json');
+        const response = await fetch('../data/affiliates.json'); // Adjusted path for chapter pages
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -15,8 +15,8 @@ async function loadAffiliateBanner() {
             if (topBanner) {
                 topBanner.innerHTML = `
                     <div class="ad-content">
-                        ${ad.image_url ? `<img src="${ad.image_url}" alt="${ad.name}">` : ''}
-                        <span>Check out our partner: <strong>${ad.name}</strong></span>
+                        ${ad.image_url ? `<img src="${ad.image_url}" alt="${ad.name || 'Partner Ad'}">` : ''}
+                        <span>Check out our partner: <strong>${ad.name || 'Our Partner'}</strong></span>
                     </div>
                     <a href="${ad.url}" target="_blank" rel="noopener noreferrer">Visit Now!</a>
                 `;
@@ -37,9 +37,9 @@ async function handleAffiliateWall() {
     const chapterContent = document.getElementById('chapterContent');
     const unlockButton = document.getElementById('unlockChapterBtn');
 
+    // If elements aren't found, it means this page isn't using the wall, so show content.
     if (!affiliateWall || !chapterContent || !unlockButton) {
-        console.warn("Affiliate wall elements not found. Chapter might be directly visible.");
-        chapterContent.classList.remove('hidden'); // Ensure content is visible if wall isn't set up
+        if (chapterContent) chapterContent.classList.remove('hidden');
         return;
     }
 
@@ -58,7 +58,7 @@ async function handleAffiliateWall() {
 
     unlockButton.addEventListener('click', async () => {
         try {
-            const response = await fetch('../data/affiliates.json');
+            const response = await fetch('../data/affiliates.json'); // Adjusted path for chapter pages
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
@@ -92,10 +92,12 @@ async function handleAffiliateWall() {
     });
 }
 
-// Function to load and display stories on the home page
-async function loadStories() {
+// --- Homepage Search Functionality ---
+let allStories = []; // Global variable to store all stories data
+
+async function loadAndDisplayStories() {
     const storiesListDiv = document.getElementById('storiesList');
-    const loadingMessage = document.getElementById('loadingStories');
+    const loadingMessage = document.getElementById('loadingStories'); // Should be removed in static generation but good fallback
 
     if (!storiesListDiv) {
         console.error("Stories list container not found.");
@@ -103,36 +105,17 @@ async function loadStories() {
     }
 
     try {
-        const response = await fetch('data/stories.json');
+        const response = await fetch('data/stories.json'); // Path relative to index.html
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
-        const stories = await response.json();
+        allStories = await response.json(); // Store all stories globally
 
         if (loadingMessage) {
             loadingMessage.remove(); // Remove loading message once data is fetched
         }
 
-        if (stories.length === 0) {
-            storiesListDiv.innerHTML = '<p>No stories available yet. Please check back later!</p>';
-            return;
-        }
-
-        stories.forEach(story => {
-            const storyCard = document.createElement('a');
-            storyCard.href = `story/${story.slug}/${story.chapters[0].slug}.html`; // Link to the first chapter
-            storyCard.classList.add('story-card');
-
-            storyCard.innerHTML = `
-                ${story.cover_image_url ? `<img src="${story.cover_image_url}" alt="${story.title} Cover">` : ''}
-                <div class="story-card-content">
-                    <h3>${story.title}</h3>
-                    <p>${story.description}</p>
-                    <span class="read-link">Read Story</span>
-                </div>
-            `;
-            storiesListDiv.appendChild(storyCard);
-        });
+        displayStories(allStories); // Display all stories initially
 
     } catch (error) {
         console.error("Error loading stories:", error);
@@ -144,10 +127,63 @@ async function loadStories() {
     }
 }
 
+
+function displayStories(storiesToDisplay) {
+    const storiesListDiv = document.getElementById('storiesList');
+    storiesListDiv.innerHTML = ''; // Clear previous content
+
+    if (storiesToDisplay.length === 0) {
+        storiesListDiv.innerHTML = '<p>No stories found matching your search criteria.</p>';
+        return;
+    }
+
+    storiesToDisplay.forEach(story => {
+        const firstChapterLink = story.chapters.length > 0 ? `story/${story.slug}/${story.chapters[0].slug}.html` : '#';
+
+        const storyCard = document.createElement('a');
+        storyCard.href = firstChapterLink;
+        storyCard.classList.add('story-card');
+
+        storyCard.innerHTML = `
+            ${story.cover_image_url ? `<img src="${story.cover_image_url}" alt="${story.title} Cover">` : ''}
+            <div class="story-card-content">
+                <h3>${story.title}</h3>
+                <p>${story.description}</p>
+                <span class="read-link">Read Story</span>
+            </div>
+        `;
+        storiesListDiv.appendChild(storyCard);
+    });
+}
+
+
+function filterStories() {
+    const searchTerm = document.getElementById('searchBox').value.toLowerCase();
+    if (!allStories || allStories.length === 0) return;
+
+    const filtered = allStories.filter(story => {
+        // Search in story title and description
+        const matchesStory = story.title.toLowerCase().includes(searchTerm) ||
+                             story.description.toLowerCase().includes(searchTerm);
+
+        // Search in chapter titles
+        const matchesChapter = story.chapters.some(chapter =>
+            chapter.title.toLowerCase().includes(searchTerm)
+        );
+
+        return matchesStory || matchesChapter;
+    });
+
+    displayStories(filtered);
+}
+
+
+// --- Chapter Page Specific Logic ---
+
 // Function to initialize chapter page (title, navigation, affiliate wall)
 async function initializeChapterPage(currentStorySlug, currentChapterSlug) {
     try {
-        const response = await fetch('../../data/stories.json'); // Adjust path for chapter pages
+        const response = await fetch('../../data/stories.json'); // Adjust path for chapter pages relative to story/slug/
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -174,21 +210,9 @@ async function initializeChapterPage(currentStorySlug, currentChapterSlug) {
         const currentChapter = currentStory.chapters[chapterIndex];
         document.getElementById('chapterTitle').textContent = currentChapter.title;
 
-        // Set up navigation links
-        const prevChapterButton = document.getElementById('prevChapter');
-        const nextChapterButton = document.getElementById('nextChapter');
 
-        if (chapterIndex > 0) {
-            const prevChapter = currentStory.chapters[chapterIndex - 1];
-            prevChapterButton.href = `../${currentStorySlug}/${prevChapter.slug}.html`;
-            prevChapterButton.classList.remove('hidden');
-        }
-
-        if (chapterIndex < currentStory.chapters.length - 1) {
-            const nextChapter = currentStory.chapters[chapterIndex + 1];
-            nextChapterButton.href = `../${currentStorySlug}/${nextChapter.slug}.html`;
-            nextChapterButton.classList.remove('hidden');
-        }
+        // Set up navigation links and dropdown
+        setupChapterNavigation(currentStory, chapterIndex);
 
         // Initialize the affiliate wall
         handleAffiliateWall();
@@ -199,6 +223,90 @@ async function initializeChapterPage(currentStorySlug, currentChapterSlug) {
     }
 }
 
-// Ensure affiliate banner loads on all pages
-// This function is called from the <script> blocks in both index.html and chapter-X.html
-// document.addEventListener('DOMContentLoaded', loadAffiliateBanner); // Called separately now
+function setupChapterNavigation(story, currentChapterIndex) {
+    const prevChapterButtonTop = document.getElementById('prevChapterTop');
+    const nextChapterButtonTop = document.getElementById('nextChapterTop');
+    const chapterDropdownTop = document.getElementById('chapterDropdownTop');
+
+    const prevChapterButtonBottom = document.getElementById('prevChapterBottom');
+    const nextChapterButtonBottom = document.getElementById('nextChapterBottom');
+    const chapterDropdownBottom = document.getElementById('chapterDropdownBottom');
+
+
+    // Populate dropdowns
+    const populateDropdown = (dropdownElement) => {
+        dropdownElement.innerHTML = ''; // Clear existing options
+        story.chapters.forEach((chapter, index) => {
+            const option = document.createElement('option');
+            option.value = `./${chapter.slug}.html`; // Link to chapter HTML
+            option.textContent = chapter.title;
+            if (index === currentChapterIndex) {
+                option.selected = true;
+            }
+            dropdownElement.appendChild(option);
+        });
+
+        // Add event listener for dropdown change
+        dropdownElement.addEventListener('change', (event) => {
+            window.location.href = event.target.value;
+        });
+    };
+
+    if (chapterDropdownTop) populateDropdown(chapterDropdownTop);
+    if (chapterDropdownBottom) populateDropdown(chapterDropdownBottom);
+
+
+    // Setup Previous/Next Buttons
+    const setupNavButtons = (prevBtn, nextBtn) => {
+        if (currentChapterIndex > 0) {
+            const prevChapter = story.chapters[currentChapterIndex - 1];
+            prevBtn.href = `./${prevChapter.slug}.html`;
+            prevBtn.classList.remove('hidden');
+        } else {
+            prevBtn.classList.add('hidden'); // Hide if no previous chapter
+        }
+
+        if (currentChapterIndex < story.chapters.length - 1) {
+            const nextChapter = story.chapters[currentChapterIndex + 1];
+            nextBtn.href = `./${nextChapter.slug}.html`;
+            nextBtn.classList.remove('hidden');
+        } else {
+            nextBtn.classList.add('hidden'); // Hide if no next chapter
+        }
+    };
+
+    if (prevChapterButtonTop && nextChapterButtonTop) setupNavButtons(prevChapterButtonTop, nextChapterButtonTop);
+    if (prevChapterButtonBottom && nextChapterButtonBottom) setupNavButtons(prevChapterButtonBottom, nextChapterButtonBottom);
+}
+
+
+// --- Event Listeners ---
+document.addEventListener('DOMContentLoaded', () => {
+    // Determine if on index.html or a chapter page
+    const isChapterPage = window.location.pathname.includes('/story/');
+
+    if (!isChapterPage) {
+        // Homepage logic
+        loadAndDisplayStories(); // Load and display all stories initially
+        loadAffiliateBanner(); // Load banner on index page
+
+        const searchBox = document.getElementById('searchBox');
+        if (searchBox) {
+            searchBox.addEventListener('keyup', filterStories);
+        }
+        const searchButton = document.getElementById('searchButton');
+        if (searchButton) {
+            searchButton.addEventListener('click', filterStories);
+        }
+
+    } else {
+        // Chapter page logic
+        const pathSegments = window.location.pathname.split('/');
+        const storySlug = pathSegments[pathSegments.length - 2];
+        const chapterFileName = pathSegments[pathSegments.length - 1];
+        const chapterSlug = chapterFileName.replace('.html', '');
+
+        initializeChapterPage(storySlug, chapterSlug);
+        loadAffiliateBanner(); // Load banner on chapter page
+    }
+});
