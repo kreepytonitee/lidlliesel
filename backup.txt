@@ -1,0 +1,1 @@
+Third working version: complete basic functions, brown theme, ads only show image.
