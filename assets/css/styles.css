@@ -223,23 +223,23 @@ h2 {
     margin-bottom: 15px;
 }
 
-.story-card .read-link {
+/* .story-card .read-link {
     display: inline-block;
-    background-color: var(--accent-brown-dark); /* Changed to brown */
+    background-color: var(--accent-brown-dark); /* Changed to brown 
     color: white;
-    padding: 8px 15px; /* Reduced padding */
+    padding: 8px 15px; /* Reduced padding 
     border-radius: 6px;
     text-align: center;
     margin-top: auto;
     text-decoration: none;
     align-self: flex-start;
     font-family: 'Roboto', sans-serif;
-    font-size: 0.9em; /* Reduced font size */
+    font-size: 0.9em; /* Reduced font size 
 }
 
 .story-card .read-link:hover {
     background-color: var(--accent-brown-medium);
-}
+} */
 
 /* Chapter Page Styles */
 .chapter-container {
@@ -322,7 +322,7 @@ h2 {
 .paragraph-pair {
     display: flex;
     margin-bottom: 30px;
-    border-left: 3px solid var(--accent-gold);
+    /* border-left: 3px solid var(--accent-gold); */
     border-radius: 6px;
     overflow: hidden;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
@@ -431,10 +431,10 @@ h2 {
 .story-suggestions .story-card p {
     font-size: 0.85em;
 }
-.story-suggestions .story-card .read-link {
+/* .story-suggestions .story-card .read-link {
     font-size: 0.85em;
     padding: 7px 12px;
-}
+} */
 
 
 /* Hidden content class */
