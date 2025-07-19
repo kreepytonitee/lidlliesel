@@ -1,0 +1,1 @@
+Fourth working version: ad functions work but subject to ad blocker logic. Images fixed
