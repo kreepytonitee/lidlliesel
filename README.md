@@ -19,3 +19,13 @@ A static site for bilingual story reading with affiliate monetization.
 
 ## Ask ChatGPT
 https://chatgpt.com/c/687a9bc6-a9bc-8004-80bf-98d28e9750a2
+
+## Todo
+Fix all text given
+Upload first 3 short and 1 long story
+Add background image
+### Future
+Redo shopee ads flow
+Add story tags and filter by tag
+Country based ads
+Domain
