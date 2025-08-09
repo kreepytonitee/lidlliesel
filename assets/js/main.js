@@ -16,9 +16,9 @@ async function loadAffiliateBanner(dataPath) {
                 topBanner.innerHTML = `
                     <div class="banner-ad-content">
                         ${ad.image_url ? `<img src="${ad.image_url}" alt="${ad.alt_text || ad.product_name || 'Partner Ad'}">` : ''}
-                        <span>Check out our partner: <strong>${ad.product_name || 'Our Partner'}</strong></span>
+                        <span>Để page có xèng ăn bún bò xin hãy bấm link: <strong>${ad.product_name || 'Our Partner'}</strong></span>
                     </div>
-                    <a href="${ad.link_url}" target="_blank" rel="noopener noreferrer">Visit Now!</a>
+                    <a href="${ad.link_url}" target="_blank" rel="noopener noreferrer">Xem ngay</a>
                 `;
                 // Also update alt text and name for better consistency
             }
@@ -38,7 +38,7 @@ async function handleAffiliateWall(dataPath) {
     const affiliateWall = document.getElementById('affiliateWall');
     const chapterContent = document.getElementById('chapterContent');
     const unlockButton = document.getElementById('unlockChapterBtn');
-    const originalButtonText = unlockButton ? unlockButton.textContent : 'Unlock Chapter by Visiting a Partner'; // Store original text for reset
+    const originalButtonText = unlockButton ? unlockButton.textContent : 'Mở khóa chương truyện'; // Store original text for reset
 
     // If elements aren't found, it means this page isn't using the wall, so show content.
     if (!affiliateWall || !chapterContent || !unlockButton) {
@@ -76,8 +76,7 @@ async function handleAffiliateWall(dataPath) {
 
             // --- Update the unlock button content with ad info ---
             unlockButton.innerHTML = `
-                ${adImageSrc ? `<img src="${adImageSrc}" alt="${selectedAd.alt_text || selectedAd.product_name || 'Partner Product'}" style="width: 40px; height: 40px; border-radius: 50%; vertical-align: middle; margin-right: 10px;">` : ''}
-                Visit Partner: <strong>${selectedAd.product_name || 'Our Partner'}</strong> to Unlock Chapter!
+                Ghé xem <strong>${selectedAd.product_name || 'Our Partner'}</strong> và mở khóa chương truyện
             `;
             // Note: Inline styles for the image are used for quick implementation.
             // Consider moving these to your assets/css/styles.css for better practice.
@@ -119,15 +118,15 @@ async function handleAffiliateWall(dataPath) {
         // --- Start countdown in the current tab ---
         let secondsLeft = 5;
         // Update button text to show countdown, overwriting the product info
-        unlockButton.textContent = `Please wait ${secondsLeft}s...`;
+        unlockButton.textContent = `Chờ xíu ạ còn ${secondsLeft}s`;
 
         const countdownInterval = setInterval(() => {
             secondsLeft--;
             if (secondsLeft > 0) {
-                unlockButton.textContent = `Please wait ${secondsLeft}s...`;
+                unlockButton.textContent = `Chờ xíu ạ còn ${secondsLeft}s`;
             } else {
                 clearInterval(countdownInterval); // Stop the countdown
-                unlockButton.textContent = 'Chapter Unlocked!'; // Indicate success
+                unlockButton.textContent = 'Cám ơn bạn đã đợi!'; // Indicate success
 
                 // --- Unlock content on the current page after countdown ---
                 affiliateWall.classList.add('hidden');
@@ -382,7 +381,7 @@ function displayRandomStorySuggestions(allStoriesData, currentStorySlug) {
     const randomSuggestions = shuffledStories.slice(0, 3);
 
     if (randomSuggestions.length > 0) {
-        suggestionsContainer.innerHTML = `<h3>You might also like:</h3><div id="suggestionsGrid" class="suggestions-grid"></div>`;
+        suggestionsContainer.innerHTML = `<h3>Có thể bạn cũng thích:</h3><div id="suggestionsGrid" class="suggestions-grid"></div>`;
         displayStories(randomSuggestions, 'suggestionsGrid', true); // Re-use displayStories with specific container ID, pass true for isSuggestion
     } else {
         suggestionsContainer.innerHTML = '<p style="text-align: center; color: var(--text-dark);">Could not find other stories for suggestions.</p>';
