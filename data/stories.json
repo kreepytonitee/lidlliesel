@@ -1,37 +1,37 @@
 [
     {
         "slug": "rotkaeppchen",
-        "title": "Rotkäppchen",
-        "description": "Ein klassisches Märchen der Brüder Grimm.",
+        "title": "Cô bé quàng khăn đỏ",
+        "description": "Truyện cổ Grimm",
         "cover_image_url": "assets/images/covers/Rotkaeppchen_maerchen_01.jpg",
         "chapters": [
             {
                 "slug": "chapter-1",
                 "title": "Rotkäppchen"
-            },
-            {
-                "slug": "chapter-2",
-                "title": "Das kleine Haus"
             }
         ]
     },
     {
-        "slug": "my-epic-saga",
-        "title": "My Epic Saga",
-        "description": "A grand adventure across many lands and hundreds of chapters.",
-        "cover_image_url": "assets/images/covers/7df5c40c07947eeed24ae5061acd39f8_1024x1024.jpg",
+        "slug": "haensel-und-gretel",
+        "title": "Hansel và Gretel",
+        "description": "Truyện cổ Grimm",
+        "cover_image_url": "assets/images/covers/536008@2x.jpg",
         "chapters": [
             {
                 "slug": "chapter-1",
-                "title": "The Beginning"
-            },
+                "title": "Hänsel und Gretel"
+            }
+        ]
+    },
+    {
+        "slug": "schneewittchen",
+        "title": "Bạch Tuyết và bảy chú lùn",
+        "description": "Truyện cổ Grimm",
+        "cover_image_url": "assets/images/covers/Schneewittchen2.jpg",
+        "chapters": [
             {
-                "slug": "chapter-2",
-                "title": "The Call to Adventure"
-            },
-            {
-                "slug": "chapter-201",
-                "title": "The Great Reveal"
+                "slug": "chapter-1",
+                "title": "Schneewittchen"
             }
         ]
     }
