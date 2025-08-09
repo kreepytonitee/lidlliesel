@@ -96,7 +96,9 @@ function getChapterHtmlTemplate(storyTitle, chapterTitle, chapterContentHtml, na
     </div>
 
     <footer>
-        <p>&copy; 2025 TiengDucTV. All rights reserved.</p>
+        Ghé chơi với page ở:
+        <a href="https://www.tiktok.com/@tiengductvtiktok" target="_blank">TikTok</a> |
+        <a href="https://www.facebook.com/profile.php?id=61554503077216" target="_blank">Facebook</a>
     </footer>
 
     <script src="${relativePathToAssets}/js/main.js"></script>
@@ -289,9 +291,11 @@ async function generateWebsite() {
             </div>
     </div>
 
-    <footer>
-        <p>&copy; 2025 TiengDucTV. All rights reserved.</p>
-    </footer>
+<footer>
+    Ghé chơi với page ở:
+    <a href="https://www.tiktok.com/@tiengductvtiktok" target="_blank">TikTok</a> |
+    <a href="https://www.facebook.com/profile.php?id=61554503077216" target="_blank">Facebook</a>
+</footer>
 
     <script src="assets/js/main.js"></script>
 </body>
