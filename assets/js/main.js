@@ -225,7 +225,7 @@ function displayStories(storiesToDisplay, containerId = 'storiesList', isSuggest
             <div class="story-card-content">
                 <h3>${story.title}</h3>
                 <p>${story.description}</p>
-                <span class="read-link">Read Story</span>
+                <span class="read-link">Đọc truyện</span>
             </div>
         `;
         containerDiv.appendChild(storyCard);
@@ -273,7 +273,7 @@ async function initializeChapterPage(currentStorySlug, currentChapterSlug, dataP
             return;
         }
 
-        document.getElementById('storyTitle').textContent = `From: ${currentStory.title}`;
+        document.getElementById('storyTitle').textContent = `Truyện: ${currentStory.title}`;
 
         const chapterIndex = currentStory.chapters.findIndex(c => c.slug === currentChapterSlug);
 
@@ -320,7 +320,7 @@ function setupChapterNavigation(story, currentChapterIndex) {
         story.chapters.forEach((chapter, index) => {
             const option = document.createElement('option');
             option.value = `./${chapter.slug}.html`;
-            option.textContent = `Chapter ${index + 1}: ${chapter.title}`;
+            option.textContent = `Chương ${index + 1}: ${chapter.title}`;
             if (index === currentChapterIndex) {
                 option.selected = true;
             }
