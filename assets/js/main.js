@@ -33,91 +33,53 @@ async function loadAffiliateBanner(dataPath) {
 }
 
 // Function to handle the affiliate wall interaction
-// dataPath is crucial for fetching affiliates.json correctly from different page depths
 async function handleAffiliateWall(dataPath) {
     const affiliateWall = document.getElementById('affiliateWall');
     const chapterContent = document.getElementById('chapterContent');
     const unlockButton = document.getElementById('unlockChapterBtn');
-    const originalButtonText = unlockButton ? unlockButton.textContent : 'Mở khóa chương truyện'; // Store original text for reset
+    const originalButtonText = unlockButton ? unlockButton.textContent : 'Mở khóa chương truyện';
 
-    // If elements aren't found, it means this page isn't using the wall, so show content.
     if (!affiliateWall || !chapterContent || !unlockButton) {
         if (chapterContent) chapterContent.classList.remove('hidden');
         return;
     }
 
-    // --- REMOVED ALL sessionStorage.getItem/setItem CALLS ---
-    // The wall will now always be visible on chapter load.
-
-    // Always display the wall and hide chapter content initially
     affiliateWall.classList.remove('hidden');
     chapterContent.classList.add('hidden');
 
-    let selectedAd = null; // Variable to store the randomly selected ad
-
     try {
-        // Fetch affiliates data immediately to populate the button
         const response = await fetch(`${dataPath}/affiliates.json`);
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         const affiliates = await response.json();
 
         if (affiliates.length > 0) {
             const randomIndex = Math.floor(Math.random() * affiliates.length);
-            selectedAd = affiliates[randomIndex]; // Store the selected ad
+            const ad = affiliates[randomIndex];
 
-            // Adjust image path for chapter pages (e.g., '../../assets/images/...')
-            let adImageSrc = selectedAd.image_url;
-            if (dataPath.includes('../')) {
-                // Prepend '../../' to 'assets/images/...' if on a chapter page
-                adImageSrc = `${dataPath.replace('data', '')}${selectedAd.image_url}`;
-            }
-
-            // --- Update the unlock button content with ad info ---
-            unlockButton.innerHTML = `
-                Ghé xem <strong>${selectedAd.product_name || 'Our Partner'}</strong> và mở khóa chương truyện
-            `;
-            // Note: Inline styles for the image are used for quick implementation.
-            // Consider moving these to your assets/css/styles.css for better practice.
-
+            unlockButton.dataset.linkUrl = ad.link_url || '';
+            unlockButton.innerHTML = `Ghé xem <strong>${ad.product_name || 'Our Partner'}</strong> và mở khóa chương truyện`;
         } else {
-            console.warn("No affiliate links found. Showing direct unlock button.");
-            unlockButton.textContent = "Unlock Chapter Directly (No Ad Available)"; // Fallback text
-            // No ad to open, so selectedAd remains null
+            console.warn('No affiliate links found. Showing direct unlock button.');
+            unlockButton.textContent = originalButtonText;
+            unlockButton.dataset.linkUrl = '';
         }
     } catch (error) {
-        console.error("Error loading affiliate data for wall:", error);
-        unlockButton.textContent = "Unlock Chapter Directly (Ad Load Error)"; // Fallback text
-        selectedAd = null; // Ensure no ad is used if there was an error loading them
+        console.error('Error loading affiliate data for wall:', error);
+        unlockButton.textContent = originalButtonText;
+        unlockButton.dataset.linkUrl = '';
     }
 
-    // Add event listener to the button (click behavior)
-    unlockButton.addEventListener('click', async () => {
-        // Disable button immediately to prevent multiple clicks
+    unlockButton.onclick = () => {
         unlockButton.disabled = true;
+        const linkUrl = unlockButton.dataset.linkUrl;
 
-        // Only open ad if one was successfully loaded and chosen
-        if (selectedAd && selectedAd.link_url) {
-            // --- Open the affiliate link immediately upon click ---
-            // 'noopener,noreferrer' for security best practices
-            const newTab = window.open(selectedAd.link_url, '_blank', 'noopener,noreferrer');
-
-            // // Optional: Check if the pop-up was blocked (though less likely now with immediate open)
-            // if (!newTab || newTab.closed || typeof newTab.focus !== 'function') {
-            //     alert('Pop-up blocked! Please allow pop-ups for this site to unlock the chapter.');
-            //     unlockButton.disabled = false; // Re-enable button
-            //     unlockButton.textContent = originalButtonText; // Reset button text
-            //     return; // Stop if pop-up was blocked
-            // }
-            
+        if (linkUrl) {
+            window.open(linkUrl, '_blank', 'noopener,noreferrer');
         } else {
-            console.warn("No ad available to open. Unlocking chapter directly.");
+            console.warn('No ad available to open. Unlocking chapter directly.');
         }
 
-        // --- Start countdown in the current tab ---
         let secondsLeft = 5;
-        // Update button text to show countdown, overwriting the product info
         unlockButton.textContent = `Chờ xíu ạ còn ${secondsLeft}s`;
 
         const countdownInterval = setInterval(() => {
@@ -125,20 +87,14 @@ async function handleAffiliateWall(dataPath) {
             if (secondsLeft > 0) {
                 unlockButton.textContent = `Chờ xíu ạ còn ${secondsLeft}s`;
             } else {
-                clearInterval(countdownInterval); // Stop the countdown
-                unlockButton.textContent = 'Cám ơn bạn đã đợi!'; // Indicate success
-
-                // --- Unlock content on the current page after countdown ---
+                clearInterval(countdownInterval);
+                unlockButton.textContent = 'Cám ơn bạn đã đợi!';
                 affiliateWall.classList.add('hidden');
                 chapterContent.classList.remove('hidden');
-                // No sessionStorage.setItem('chapterUnlocked', 'true') here
-
-                // Re-enable button (though it's now hidden with the wall)
                 unlockButton.disabled = false;
-                // You could reset its text to originalButtonText here if the wall could reappear.
             }
-        }, 1000); // Update every 1 second
-    });
+        }, 1000);
+    };
 }
 
 // --- Homepage Search Functionality ---
