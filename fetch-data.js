@@ -68,15 +68,15 @@ function getChapterHtmlTemplate(storyTitle, chapterTitle, chapterContentHtml, na
         <h2 id="storyTitle">From: ${storyTitle}</h2>
 
         <div class="chapter-navigation">
-            <a href="../../index.html" id="homeButtonTop" class="nav-button">Home</a>
-            <a href="${navLinks.prev}" id="prevChapterTop" class="nav-button ${navLinks.prev === '#' ? 'hidden' : ''}">&laquo; Previous Chapter</a>
+            <a href="../../index.html" id="homeButtonTop" class="nav-button">Trang chủ</a>
+            <a href="${navLinks.prev}" id="prevChapterTop" class="nav-button ${navLinks.prev === '#' ? 'hidden' : ''}">&laquo; Chương trước</a>
             <select id="chapterDropdownTop" class="chapter-dropdown"></select>
-            <a href="${navLinks.next}" id="nextChapterTop" class="nav-button ${navLinks.next === '#' ? 'hidden' : ''}">Next Chapter &raquo;</a>
+            <a href="${navLinks.next}" id="nextChapterTop" class="nav-button ${navLinks.next === '#' ? 'hidden' : ''}">Chương sau &raquo;</a>
         </div>
 
         <div id="affiliateWall" class="affiliate-wall">
-            <p>To unlock this chapter and support our work, please visit one of our partners:</p>
-            <button id="unlockChapterBtn" class="unlock-button">Unlock Chapter by Visiting a Partner</button>
+            <p>Chúng mình xin bạn 5s để ấn link này và ủng hộ page phát triển nhé:</p>
+            <button id="unlockChapterBtn" class="unlock-button">Mở khóa chương truyện</button>
         </div>
 
         <div id="chapterContent" class="chapter-content hidden">
@@ -84,10 +84,10 @@ function getChapterHtmlTemplate(storyTitle, chapterTitle, chapterContentHtml, na
         </div>
 
         <div class="chapter-navigation bottom">
-            <a href="../../index.html" id="homeButtonBottom" class="nav-button">Home</a>
-            <a href="${navLinks.prev}" id="prevChapterBottom" class="nav-button ${navLinks.prev === '#' ? 'hidden' : ''}">&laquo; Previous Chapter</a>
+            <a href="../../index.html" id="homeButtonBottom" class="nav-button">Trang chủ</a>
+            <a href="${navLinks.prev}" id="prevChapterBottom" class="nav-button ${navLinks.prev === '#' ? 'hidden' : ''}">&laquo; Chương trước</a>
             <select id="chapterDropdownBottom" class="chapter-dropdown"></select>
-            <a href="${navLinks.next}" id="nextChapterBottom" class="nav-button ${navLinks.next === '#' ? 'hidden' : ''}">Next Chapter &raquo;</a>
+            <a href="${navLinks.next}" id="nextChapterBottom" class="nav-button ${navLinks.next === '#' ? 'hidden' : ''}">Chương sau &raquo;</a>
         </div>
 
         <div id="storySuggestions" class="story-suggestions">
@@ -96,7 +96,7 @@ function getChapterHtmlTemplate(storyTitle, chapterTitle, chapterContentHtml, na
     </div>
 
     <footer>
-        <p>&copy; 2025 Dual Language Stories. All rights reserved.</p>
+        <p>&copy; 2025 TiengDucTV. All rights reserved.</p>
     </footer>
 
     <script src="${relativePathToAssets}/js/main.js"></script>
@@ -266,7 +266,7 @@ async function generateWebsite() {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dual Language Stories - Learn with Reading</title>
+    <title>TiengDucTV - Học rất nhàn khi mình đọc rất nhiều</title>
     <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="assets/css/styles.css">
 </head>
@@ -275,22 +275,22 @@ async function generateWebsite() {
         </header>
 
     <div class="container">
-        <h1>Welcome to Dual Language Stories!</h1>
-        <p class="tagline">Read engaging stories side-by-side in two languages to boost your learning.</p>
+        <h1>Chào mừng đến với trang tổng hợp truyện của TiengDucTV!</h1>
+        <p class="tagline">Hiện các truyện đang được update song ngữ Đức - Việt, sắp tới sẽ có thêm tiếng Anh. Mọi người có yêu cầu truyện nào cứ ib page (tiktok/facebook) nha. Chúc mọi người đọc truyện vui và tiện thể học mót thêm ít ngoại ngữ nè 🫶</p>
 
         <div class="search-container">
-            <input type="text" id="searchBox" placeholder="Search stories or chapters...">
+            <input type="text" id="searchBox" placeholder="Tìm theo tên truyện hoặc tên chương...">
             <button id="searchButton">Search</button>
         </div>
 
-        <h2>All Stories</h2>
+        <h2>Tất cả truyện</h2>
         <div id="storiesList" class="stories-grid">
             <p id="loadingStories">Loading stories...</p>
             </div>
     </div>
 
     <footer>
-        <p>&copy; 2025 Dual Language Stories. All rights reserved.</p>
+        <p>&copy; 2025 TiengDucTV. All rights reserved.</p>
     </footer>
 
     <script src="assets/js/main.js"></script>
