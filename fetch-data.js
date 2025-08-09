@@ -278,7 +278,7 @@ async function generateWebsite() {
 
     <div class="container">
         <h1>Chào mừng đến với trang tổng hợp truyện của TiengDucTV!</h1>
-        <p class="tagline">Hiện các truyện đang được update song ngữ Đức - Việt, sắp tới sẽ có thêm tiếng Anh. Mọi người có yêu cầu truyện nào cứ ib page (tiktok/facebook) nha. Chúc mọi người đọc truyện vui và tiện thể học mót thêm ít ngoại ngữ nè 🫶</p>
+        <p class="tagline">Hiện các truyện đang được update song ngữ Đức - Việt, sắp tới sẽ có thêm tiếng Anh. Mọi người có yêu cầu truyện nào cứ ib page (tiktok/facebook) nha. Chúc mọi người đọc truyện vui vẻ và tiện thể học mót thêm được ít ngoại ngữ nè 🫶</p>
 
         <div class="search-container">
             <input type="text" id="searchBox" placeholder="Tìm theo tên truyện hoặc tên chương...">
